@@ -40,6 +40,8 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        
+        if (ProcessServlet.blockTest) {return;}
 
         String cmd = req.getParameter("cmd");
         String user = req.getParameter("user");

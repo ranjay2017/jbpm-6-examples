@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
+import org.jbpm.examples.web.ProcessServlet;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
@@ -79,8 +80,9 @@ public class ProcessBean implements ProcessLocal {
 
             ut.commit();
         } catch (Exception e) {
+            ProcessServlet.blockTest = true;
             System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
-            if (ut.getStatus() == Status.STATUS_ACTIVE) {
+            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                 ut.rollback();
             }
             throw e;

@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jbpm.examples.ejb.ProcessLocal;
 
 public class ProcessServlet extends HttpServlet {
+    
+    public static boolean blockTest = false; // for effective load test
 
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +40,8 @@ public class ProcessServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
+        
+        if (ProcessServlet.blockTest) {return;}
         
         String recipient = req.getParameter("recipient");
 

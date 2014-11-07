@@ -28,6 +28,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
+import org.jbpm.examples.web.ProcessServlet;
 import org.jbpm.services.task.exception.PermissionDeniedException;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
@@ -53,6 +54,7 @@ public class TaskBean implements TaskLocal {
             list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
             ut.commit();
         } catch (RollbackException e) {
+            ProcessServlet.blockTest = true;
             System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             throw new RuntimeException(e);
         }
@@ -85,20 +87,22 @@ public class TaskBean implements TaskLocal {
                 throw new ProcessOperationException("The same process instance has likely been accessed concurrently",
                         e);
             }
+            ProcessServlet.blockTest = true;
             throw new RuntimeException(e);
         } catch (PermissionDeniedException e) {
             System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             // Transaction might be already rolled back by TaskServiceSession
-            if (ut.getStatus() == Status.STATUS_ACTIVE) {
+            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                 ut.rollback();
             }
             // Probably the task has already been started by other users
             throw new ProcessOperationException("The task (id = " + taskId
                     + ") has likely been started by other users ", e);
         } catch (Exception e) {
+            ProcessServlet.blockTest = true;
             System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             // Transaction might be already rolled back by TaskServiceSession
-            if (ut.getStatus() == Status.STATUS_ACTIVE) {
+            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                 ut.rollback();
             }
             throw new RuntimeException(e);
