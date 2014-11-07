@@ -1,0 +1,40 @@
+RULE log
+CLASS org.jbpm.examples.ejb.ProcessBean
+METHOD startProcess
+AT LINE 62
+IF TRUE
+  DO System.out.println("startProcess : ksession = " + $ksession);
+ENDRULE
+
+RULE log2
+CLASS org.jbpm.services.task.wih.ExternalTaskEventListener
+METHOD processTaskState
+AT LINE 77
+IF TRUE
+  DO System.out.println("processTaskState : ksession = " + $session);
+ENDRULE
+
+RULE log3
+CLASS org.drools.persistence.SingleSessionCommandService
+METHOD execute
+AT LINE 377
+IF TRUE
+  DO System.out.println("execute : this = " + $this);
+ENDRULE
+
+RULE log4
+CLASS org.jbpm.process.instance.impl.ProcessInstanceImpl
+METHOD disconnect
+AT LINE 235
+IF TRUE
+  DO System.out.println("disconnect : this = " + $this);
+ENDRULE
+
+RULE log5
+CLASS org.jbpm.process.instance.impl.ProcessInstanceImpl
+METHOD getProcess
+AT LINE 90
+IF TRUE
+  DO System.out.println("getProcess null : this = " + $this);
+ENDRULE
+
