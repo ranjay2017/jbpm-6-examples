@@ -41,9 +41,6 @@ import org.kie.internal.runtime.manager.context.EmptyContext;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class ProcessBean implements ProcessLocal {
 
-    @Resource
-    private UserTransaction ut;
-
     @Inject
     @Singleton
     private RuntimeManager singletonManager;
@@ -64,8 +61,6 @@ public class ProcessBean implements ProcessLocal {
 
         long processInstanceId = -1;
 
-        ut.begin();
-
         try {
             // start a new process instance
             Map<String, Object> params = new HashMap<String, Object>();
@@ -78,13 +73,9 @@ public class ProcessBean implements ProcessLocal {
             System.out.println("Process started ... : processInstanceId = "
                     + processInstanceId);
 
-            ut.commit();
         } catch (Exception e) {
             ProcessServlet.blockTest = true;
-            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
-            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-                ut.rollback();
-            }
+            System.out.println("--- " + e);
             throw e;
         }
 

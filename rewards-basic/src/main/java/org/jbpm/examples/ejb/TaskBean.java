@@ -37,25 +37,18 @@ import org.kie.api.task.model.TaskSummary;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class TaskBean implements TaskLocal {
 
-
-    @Resource
-    private UserTransaction ut;
-
     @Inject
     TaskService taskService;
     
     public List<TaskSummary> retrieveTaskList(String actorId) throws Exception {
-
-        ut.begin();
-        
+      
         List<TaskSummary> list;
         
         try {
             list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
-            ut.commit();
-        } catch (RollbackException e) {
+        } catch (Exception e) {
             ProcessServlet.blockTest = true;
-            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
+            System.out.println("--- " + e);
             throw new RuntimeException(e);
         }
 
@@ -69,8 +62,6 @@ public class TaskBean implements TaskLocal {
 
     public void approveTask(String actorId, long taskId) throws Exception {
 
-        ut.begin();
-
         try {
             System.out.println("approveTask (taskId = " + taskId + ") by " + actorId);
             taskService.start(taskId, actorId);
@@ -78,33 +69,14 @@ public class TaskBean implements TaskLocal {
 
             //Thread.sleep(10000); // To test OptimisticLockException
 
-            ut.commit();
-        } catch (RollbackException e) {
-            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
-            Throwable cause = e.getCause();
-            if (cause != null && cause instanceof OptimisticLockException) {
-                // Concurrent access to the same process instance
-                throw new ProcessOperationException("The same process instance has likely been accessed concurrently",
-                        e);
-            }
-            ProcessServlet.blockTest = true;
-            throw new RuntimeException(e);
         } catch (PermissionDeniedException e) {
-            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
-            // Transaction might be already rolled back by TaskServiceSession
-            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-                ut.rollback();
-            }
+            System.out.println("--- " + e);
             // Probably the task has already been started by other users
             throw new ProcessOperationException("The task (id = " + taskId
                     + ") has likely been started by other users ", e);
         } catch (Exception e) {
             ProcessServlet.blockTest = true;
-            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
-            // Transaction might be already rolled back by TaskServiceSession
-            if (ut.getStatus() == Status.STATUS_ACTIVE || ut.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-                ut.rollback();
-            }
+            System.out.println("--- " + e);
             throw new RuntimeException(e);
         } 
     }
