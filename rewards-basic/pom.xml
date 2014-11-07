@@ -14,6 +14,7 @@
   <name>rewards-basic</name>
 
   <properties>
+    <jbpm.version>6.1.0.Final</jbpm.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

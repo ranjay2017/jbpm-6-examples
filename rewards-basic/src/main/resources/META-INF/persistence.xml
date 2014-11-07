@@ -44,18 +44,16 @@
         <class>org.jbpm.services.task.impl.model.TaskImpl</class>
         <class>org.jbpm.services.task.impl.model.TaskDataImpl</class>
         <class>org.jbpm.services.task.impl.model.UserImpl</class>
-    
-        <!--BAM for task service -->
-        <class>org.jbpm.services.task.impl.model.BAMTaskSummaryImpl</class>
-    
-        <!-- Event Classes -->
-        <class>org.jbpm.services.task.audit.TaskEventImpl</class>
+
+        <class>org.jbpm.services.task.audit.impl.model.BAMTaskSummaryImpl</class>
+        <class>org.jbpm.services.task.audit.impl.model.TaskEventImpl</class>
+        <class>org.jbpm.services.task.audit.impl.model.AuditTaskImpl</class>
         
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
     <properties>
       <property name="hibernate.max_fetch_depth" value="3"/>
-      <property name="hibernate.hbm2ddl.auto" value="update" />
+      <property name="hibernate.hbm2ddl.auto" value="create" />
       <property name="hibernate.show_sql" value="false" />	
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup" />
       <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

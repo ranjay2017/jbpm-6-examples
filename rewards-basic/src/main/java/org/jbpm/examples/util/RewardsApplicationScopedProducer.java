@@ -56,6 +56,7 @@ public class RewardsApplicationScopedProducer {
         RuntimeEnvironment environment = RuntimeEnvironmentBuilder.Factory.get()
                 .newDefaultBuilder()
                 .entityManagerFactory(emf)
+                .addEnvironmentEntry("TRANSACTION_LOCK_ENABLED", "true")
                 .addAsset(
                         ResourceFactory
                                 .newClassPathResource("rewards-basic.bpmn"),
