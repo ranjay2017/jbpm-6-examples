@@ -33,6 +33,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.internal.runtime.manager.cdi.qualifier.PerProcessInstance;
 import org.kie.internal.runtime.manager.cdi.qualifier.Singleton;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 
@@ -45,7 +46,7 @@ public class ProcessBean implements ProcessLocal {
     private UserTransaction ut;
 
     @Inject
-    @Singleton
+    @PerProcessInstance
     private RuntimeManager singletonManager;
 
     @PostConstruct
