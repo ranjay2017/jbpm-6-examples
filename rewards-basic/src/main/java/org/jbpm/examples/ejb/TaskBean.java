@@ -53,7 +53,7 @@ public class TaskBean implements TaskLocal {
             list = taskService.getTasksAssignedAsPotentialOwner(actorId, "en-UK");
             ut.commit();
         } catch (RollbackException e) {
-            e.printStackTrace();
+            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             throw new RuntimeException(e);
         }
 
@@ -78,7 +78,7 @@ public class TaskBean implements TaskLocal {
 
             ut.commit();
         } catch (RollbackException e) {
-            e.printStackTrace();
+            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             Throwable cause = e.getCause();
             if (cause != null && cause instanceof OptimisticLockException) {
                 // Concurrent access to the same process instance
@@ -87,7 +87,7 @@ public class TaskBean implements TaskLocal {
             }
             throw new RuntimeException(e);
         } catch (PermissionDeniedException e) {
-            e.printStackTrace();
+            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             // Transaction might be already rolled back by TaskServiceSession
             if (ut.getStatus() == Status.STATUS_ACTIVE) {
                 ut.rollback();
@@ -96,7 +96,7 @@ public class TaskBean implements TaskLocal {
             throw new ProcessOperationException("The task (id = " + taskId
                     + ") has likely been started by other users ", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             // Transaction might be already rolled back by TaskServiceSession
             if (ut.getStatus() == Status.STATUS_ACTIVE) {
                 ut.rollback();

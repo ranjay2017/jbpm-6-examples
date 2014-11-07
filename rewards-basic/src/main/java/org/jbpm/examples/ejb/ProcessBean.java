@@ -79,7 +79,7 @@ public class ProcessBean implements ProcessLocal {
 
             ut.commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             if (ut.getStatus() == Status.STATUS_ACTIVE) {
                 ut.rollback();
             }
