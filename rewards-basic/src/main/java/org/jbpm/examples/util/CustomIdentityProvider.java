@@ -1,6 +1,7 @@
 package org.jbpm.examples.util;
 
 import javax.enterprise.context.ApplicationScoped;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +20,12 @@ public class CustomIdentityProvider implements IdentityProvider {
     public List<String> getRoles() {
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean hasRole(String arg0) {
+        // TODO Auto-generated method stub
+        return true;
     }
 
 }
