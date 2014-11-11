@@ -82,6 +82,7 @@ public class TaskBean implements TaskLocal {
         } catch (RollbackException e) {
             System.out.println("--- " + e + ", ut.getStatus() = " + ut.getStatus());
             Throwable cause = e.getCause();
+            System.out.println("  ---> " + cause);
             if (cause != null && cause instanceof OptimisticLockException) {
                 // Concurrent access to the same process instance
                 throw new ProcessOperationException("The same process instance has likely been accessed concurrently",
