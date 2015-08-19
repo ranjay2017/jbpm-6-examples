@@ -20,6 +20,7 @@ package org.jbpm.examples.web;
 import org.jbpm.examples.util.StartupBean;
 import org.jbpm.services.ejb.api.ProcessServiceEJBLocal;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -27,6 +28,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.UserTransaction;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +38,9 @@ import java.util.Map;
 public class ProcessServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    
+    @Resource
+    private UserTransaction ut;
 
     @EJB
     private ProcessServiceEJBLocal processService;
@@ -47,11 +53,26 @@ public class ProcessServlet extends HttpServlet {
 
         long processInstanceId = -1;
         try {
+            
+            ut.begin();
+            
+            System.out.println("begin");
+            
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("recipient", recipient);
             processInstanceId = processService.startProcess(StartupBean.DEPLOYMENT_ID,
                     "org.jbpm.examples.rewards", params);
             System.out.println("Process instance " + processInstanceId + " has been successfully started.");
+            
+            System.out.println("start sleeping");
+            
+            Thread.sleep(10000);
+            
+            System.out.println("sleep finished");
+            
+            ut.commit();
+            
+            
         } catch (Exception e) {
             throw new ServletException(e);
         }
