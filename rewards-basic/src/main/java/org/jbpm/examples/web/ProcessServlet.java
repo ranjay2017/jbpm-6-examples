@@ -17,6 +17,7 @@
 package org.jbpm.examples.web;
 
 
+import org.drools.core.command.runtime.GetIdCommand;
 import org.jbpm.examples.util.StartupBean;
 import org.jbpm.services.ejb.api.ProcessServiceEJBLocal;
 
@@ -74,6 +75,13 @@ public class ProcessServlet extends HttpServlet {
             
             
         } catch (Exception e) {
+            try {
+                // just to make sure TransactionLockInterceptor unlocked
+                System.out.println("unlock!!");
+                processService.execute(StartupBean.DEPLOYMENT_ID, new GetIdCommand());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
             throw new ServletException(e);
         }
 
